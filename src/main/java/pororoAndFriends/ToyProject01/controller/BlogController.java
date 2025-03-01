@@ -1,5 +1,6 @@
 package pororoAndFriends.ToyProject01.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,48 +16,42 @@ import pororoAndFriends.ToyProject01.dto.AddArticleRequest;
 import pororoAndFriends.ToyProject01.dto.ArticleId;
 import pororoAndFriends.ToyProject01.dto.PutArticleRequest;
 import pororoAndFriends.ToyProject01.repository.BlogRepository;
+import pororoAndFriends.ToyProject01.service.BlogService;
 
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
 public class BlogController {
 
-    private final BlogRepository blogRepository;
+    private final BlogService blogService;
 
     @PostMapping("/article")
     public ResponseEntity<?> addArticle(@RequestBody AddArticleRequest request) {
-
-        Article article = new Article();
-        article.update(request.getTitle(), request.getContent());
-        blogRepository.save(article);
-
+        blogService.createArticle(request);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/article")
     public ResponseEntity<?> getArticle(@RequestParam(name = "id") Long articleId) {
-        Article article = blogRepository.findById(articleId).get();
+        Article article = blogService.getArticle(articleId);
         return ResponseEntity.ok().body(article);
     }
 
     @DeleteMapping("/article")
     public ResponseEntity<?> deleteArticle(@RequestBody ArticleId articleId) {
-        blogRepository.deleteById(articleId.getId());
-
+        blogService.deleteArticle(articleId.getId());
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/article")
     public ResponseEntity<?> putArticle(@RequestBody PutArticleRequest request) {
-        Article article = blogRepository.findById(request.getId()).get();
-        article.update(request.getTitle(), request.getContent());
-        blogRepository.save(article);
-
-        return ResponseEntity.ok().build();
+        Article article = blogService.putArticle(request);
+        return ResponseEntity.ok().body(article);
     }
 
     @GetMapping("/articles")
     public ResponseEntity<?> getArticles() {
-        return ResponseEntity.ok(blogRepository.findAll());
+        List<Article> articles = blogService.getArticles();
+        return ResponseEntity.ok(articles);
     }
 }
