@@ -15,10 +15,9 @@ public class BlogService {
 
     public void createArticle(AddArticleRequest request) {
         Article article = new Article();
-        article.update(request.getTitle(), request.getContent());
+        article.update(request.title(), request.content());
         blogRepository.save(article);
     }
-
 
     public Article getArticle(Long articleId) {
         return blogRepository.findById(articleId).orElseThrow(() -> new IllegalArgumentException("Article not found"));
@@ -28,12 +27,11 @@ public class BlogService {
         blogRepository.deleteById(id);
     }
 
-    public Article putArticle(PutArticleRequest request) {
-        Article article = blogRepository.findById(request.getId())
+    public void putArticle(PutArticleRequest request) {
+        Article article = blogRepository.findById(request.id())
                 .orElseThrow(() -> new IllegalArgumentException("Article not found"));
-        article.update(request.getTitle(), request.getContent());
+        article.update(request.title(), request.content());
         blogRepository.save(article);
-        return article;
     }
 
     public List<Article> getArticles() {
